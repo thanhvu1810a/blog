@@ -1,4 +1,4 @@
-import { IsEmail, IsNotEmpty, IsString } from "class-validator";
+import { IsEmail, IsNotEmpty, IsString, Matches, MinLength } from "class-validator";
 
 
   export class CreateUserDto {
@@ -24,6 +24,16 @@ import { IsEmail, IsNotEmpty, IsString } from "class-validator";
     @IsString()
     newPassword: string;
   }
+
+  export class ChangePasswordDto {
+    @IsString()
+    oldPassword: string;
+  
+    @IsString()
+    @MinLength(6)
+    @Matches(/^(?=.*[0-9])/, { message: 'Password must contain at least one number' })
+    newPassword: string;
+    }
 
   export class CodeAuthDto {
 

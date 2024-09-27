@@ -53,7 +53,7 @@ import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
     async getSubscribers() {
       return this.subscriberService.send(
         {
-          cmd: 'get-all-subscriber',
+          cmd: 'get-all',
         },
         {},
       );

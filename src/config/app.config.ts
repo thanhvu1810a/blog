@@ -10,7 +10,7 @@ export default registerAs(
     http: {
       enable: true,
       host: process.env.HTTP_HOST ?? 'localhost',
-      port: process.env.HTTP_PORT ? +process.env.HTTP_PORT : 3000,
+      port: process.env.HTTP_PORT ? +process.env.HTTP_PORT : 8000,
     },
   }),
 );

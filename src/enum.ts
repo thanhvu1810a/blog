@@ -1,14 +1,9 @@
-export enum EStatus {
-    inactive,
-    active,
-  }
-  
-  export enum ERole {
+export enum ERole {
     user = 0,
     admin,
-  }
+}
 
-  export enum EAuthType {
+export enum EAuthType {
     access = 1,
     refresh,
-  }
+}

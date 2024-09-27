@@ -2,7 +2,7 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument, SchemaTypes } from 'mongoose';
 import { Base } from 'src/common/database/schema/base.schema';
 import { defaultSchemaOptions } from 'src/common/utils/object.util';
-import { User } from 'src/user/schema/user.schema';
+import { User } from 'src/module/user/schema/user.schema';
 
 export type TokenDocument = HydratedDocument<Token>;
 

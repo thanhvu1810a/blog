@@ -11,9 +11,6 @@ import { ConfigService } from '@nestjs/config';
         connection: {
           host: configService.get('cache.redisHost'),
           port: +configService.get('cache.redisPort'),
-          username: configService.get('cache.redisUsername'),
-          password: configService.get('cache.redisPassword'),
-          db: configService.get('cache.redisQueueDatabase'),
         },
       }),
     }),
