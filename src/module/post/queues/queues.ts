@@ -2,10 +2,14 @@ import { OnWorkerEvent, Processor, WorkerHost } from '@nestjs/bullmq';
 import { PostsService } from 'src/module/post/post.service';
 import { Job } from 'bullmq';
 import { Process } from '@nestjs/bull';
+import { ClientProxy } from '@nestjs/microservices';
+import { Inject } from '@nestjs/common';
 
 @Processor('import')
 export class ImportProcessor extends WorkerHost {
-  constructor(private readonly postService: PostsService) {
+  constructor(private readonly postService: PostsService,
+    @Inject('IMPORT_SERVICE') private readonly importService: ClientProxy,
+  ) {
     super();
   }
 
@@ -36,6 +40,18 @@ export class ImportProcessor extends WorkerHost {
 
   @Process('import-blog')
   async process(job: Job<any, any, string>): Promise<void> {
-    await this.postService.verifyImport(job.data);
+    if(job.data.type === false){
+      await this.postService.verifyImport(job.data);
+      return
+    }
+    const verifyData = await this.postService.rabbitTransfer(job.data);
+    this.importService.emit(
+      {
+        cmd: 'import-blog-rabbitmq',
+      },
+      {
+        verifyData,
+      },
+    );
   }
 }

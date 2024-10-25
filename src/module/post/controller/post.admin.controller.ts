@@ -8,6 +8,7 @@ import { ReqAuthUser } from 'src/common/decorator/request.decorator';
 import { AuthUser } from 'src/auth/types/auth.type';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { multerOptions } from 'src/config/multer.config';
+import { ValidateMongoId } from 'src/common/utils/validate.util';
 
 @Controller('post')
 @ApiTags('Posts')
@@ -18,12 +19,12 @@ export class PostAdminController {
     ) {}
 
 
-    @UseGuards(JwtAuthGuard)
-    @HttpCode(HttpStatus.CREATED)
-    @Post()
-    async createPost(@ReqAuthUser() user: AuthUser, @Body() post: CreatePostDto) {
-      return this.postService.createPost(user, post);
-    }
+  @UseGuards(JwtAuthGuard)
+  @HttpCode(HttpStatus.CREATED)
+  @Post()
+  async createPost(@ReqAuthUser() user: AuthUser, @Body() post: CreatePostDto) {
+    return this.postService.createPost(user, post);
+  }
   
   @Put(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
@@ -32,12 +33,14 @@ export class PostAdminController {
   }
 
   @Get('get/category')
+  @HttpCode(HttpStatus.OK)
   async getByCategory(@Query('category_id') category_id) {
     return await this.postService.getByCategory(category_id);
   }
 
   @Delete(':id')
-  async deletePost(@Param('id') id: string) {
+  @HttpCode(HttpStatus.NO_CONTENT)
+  async deletePost(@Param('id',ValidateMongoId) id: string) {
     await this.postService.deletePost(id);
     return true;
   }

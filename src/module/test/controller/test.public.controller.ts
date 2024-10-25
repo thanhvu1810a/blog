@@ -8,9 +8,8 @@ import {
   } from '@nestjs/common';
 import { CategoryService } from '../category.service';
 import { FilterCategoryDto } from '../dtos/filter-category.dto';
-import { ValidateMongoId } from 'src/common/utils/validate.util';
   
-  @Controller('category')
+  @Controller('test')
   export class CategoryPublicController {
     constructor(private readonly categoryService: CategoryService) {}
 
@@ -22,7 +21,7 @@ import { ValidateMongoId } from 'src/common/utils/validate.util';
 
     @Get(':id')
     @HttpCode(HttpStatus.OK)
-    async getCategoryById(@Param('id',ValidateMongoId) category_id) {
+    async getCategoryById(@Param('id') category_id) {
       return await this.categoryService.getById(category_id);
     }
   }

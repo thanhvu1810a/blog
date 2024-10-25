@@ -4,6 +4,7 @@ import { ApiTags } from '@nestjs/swagger';
 import { CreatePostDto } from '../dtos/create-post.dto';
 import { ReqAuthUser } from 'src/common/decorator/request.decorator';
 import { AuthUser } from 'src/auth/types/auth.type';
+import { ValidateMongoId } from 'src/common/utils/validate.util';
 
 @Controller('post')
 @ApiTags('Posts')
@@ -12,19 +13,9 @@ export class PostPublicController {
     private readonly postService:PostsService,
     ) {}
 
-
-    @HttpCode(HttpStatus.CREATED)
-    @Post()
-    async createPost(@ReqAuthUser() user: AuthUser, @Body() post: CreatePostDto) {
-      return this.postService.createPost(user, post);
-    }
-  
-
   @Get('get/category')
   @HttpCode(HttpStatus.OK)
-  async getByCategory(@Query('category_id') category_id) {
+  async getByCategory(@Query('category_id',ValidateMongoId) category_id:string) {
     return await this.postService.getByCategory(category_id);
   }
-
-
 }

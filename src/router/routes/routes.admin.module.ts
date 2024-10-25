@@ -5,15 +5,18 @@ import { CategoryModule } from 'src/module/category/category.module';
 import { UserAdminController } from 'src/module/user/controller/user.admin.controller';
 import { UserModule } from 'src/module/user/user.module';
 import { CategoryAdminController } from 'src/module/category/controller/category.admin.controller';
+import { TestAdminController } from 'src/module/test/controller/test.admin.controller';
+import { TestModule } from 'src/module/test/test.module';
 
 @Module({
   controllers: [
     UserAdminController,
     PostAdminController,
-    CategoryAdminController
+    CategoryAdminController,
+    TestAdminController
   ],
   providers: [],
   exports: [],
-  imports: [CategoryModule, PostsModule, UserModule],
+  imports: [CategoryModule, PostsModule, UserModule,TestModule],
 })
 export class RoutesAdminModule {}

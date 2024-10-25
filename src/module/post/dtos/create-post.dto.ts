@@ -21,12 +21,8 @@ import {
     content: string;
   
     @IsNotEmpty()
-    @IsMongoId()
-    @IsString()
     categories: string;
 
-    @IsNotEmpty()
-    @IsMongoId()
-    @IsString()
+    
     user: string;
   }

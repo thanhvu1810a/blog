@@ -1,4 +1,4 @@
-import { BadRequestException, HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { BadRequestException, HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 import { InjectQueue } from '@nestjs/bull';
 import { Queue } from 'bull';
@@ -6,7 +6,7 @@ import dayjs from 'dayjs';
 import { v4 as uuidv4 } from 'uuid'
 import { CreateUserDto } from './dtos/user-create.dto';
 import { hashPasswordHelper } from 'src/common/utils/help';
-import { CodeAuthDto, LoginUserDto } from 'src/auth/dtos/auth.dto';
+import { CodeAuthDto } from 'src/auth/dtos/auth.dto';
 import { User, UserDocument } from './schema/user.schema';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, UpdateQuery } from 'mongoose';
@@ -16,14 +16,19 @@ import { FilterUserDto } from './dtos/user-filter.dto';
 import { ListPaginate } from 'src/common/database/types/database.type';
 import { wrapPagination } from 'src/common/utils/object.util';
 import { UpdateUserDto } from './dtos/user-update.dto';
-import { ERole } from 'src/enum';
+import { ERole } from 'src/common/database/types/enum';
+import { Cron, CronExpression } from '@nestjs/schedule';
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
+import { Cache } from 'cache-manager';
 
 @Injectable()
 export class UserService {
   constructor(
     @InjectModel(User.name) private userModel: Model<UserDocument>,
     @InjectQueue('send-mail') private sendMail: Queue,
+    @Inject(CACHE_MANAGER) private cacheManager: Cache
   ) {}
+
 
   async register(registerDto:CreateUserDto):Promise<any>{
     const {name,email,password,role} = registerDto
@@ -65,7 +70,7 @@ export class UserService {
       .limit(params.limit)
       .skip(params.limit * (params.page - 1))
       .sort({
-        created_at: 'asc',
+        createdAt: 'asc',
       })
       .exec();
 
@@ -138,7 +143,7 @@ export class UserService {
       email: data.email
     })
     if (!user) {
-      throw new BadRequestException("The code is invalid or has expired")
+      throw new BadRequestException("The user is not exist")
     }
 
     //check expire code

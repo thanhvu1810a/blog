@@ -1,4 +1,4 @@
-import { ERole } from 'src/enum';
+import { ERole } from 'src/common/database/types/enum';
 
 export type AuthUser = {
   _id: string;

@@ -7,7 +7,7 @@ import {
   MinLength,
 } from 'class-validator';
 import { IsEnumValue } from 'src/common/decorator/enum-value.decorator';
-import { ERole } from 'src/enum';
+import { ERole } from 'src/common/database/types/enum';
 
 export class CreateUserDto {
   @IsNotEmpty()

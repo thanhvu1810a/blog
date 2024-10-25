@@ -11,7 +11,7 @@ import { ReqAuthUser } from 'src/common/decorator/request.decorator';
 import { RolesGuard } from 'src/common/role/guard/roles.guard';
 import { CreateUserDto } from 'src/module/user/dtos/user-create.dto';
 import { ExtractJwt } from 'passport-jwt';
-import { EAuthType } from 'src/enum';
+import { EAuthType } from 'src/common/database/types/enum';
 import { Request } from 'express';
 
 @Controller()

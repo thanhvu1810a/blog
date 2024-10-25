@@ -37,10 +37,10 @@ import { IsEmail, IsNotEmpty, IsString, Matches, MinLength } from "class-validat
 
   export class CodeAuthDto {
 
-    @IsNotEmpty({ message: "_id không được để trống" })
+    @IsNotEmpty({ message: "_id cannot be empty" })
     email: string;
 
-    @IsNotEmpty({ message: "code không được để trống" })
+    @IsNotEmpty({ message: "code cannot be empty" })
     code: string;
 
 }

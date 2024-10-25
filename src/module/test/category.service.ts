@@ -5,23 +5,24 @@ import {
   } from '@nestjs/common';
 import { CreateCategoryDto } from './dtos/create-category.dto';
 import { InjectModel } from '@nestjs/mongoose';
-import { Category } from './schema/category.schema';
-import { Model } from 'mongoose';
+import { Test, TestDocument } from './schema/test.schema';
+import { Model, Types } from 'mongoose';
 import { plainToInstance } from 'class-transformer';
 import { CategoryResponse } from './response/category.response';
 import { UpdateCategoryDto } from './dtos/update-category.dto';
 import { FilterCategoryDto } from './dtos/filter-category.dto';
 import { ListPaginate } from 'src/common/database/types/database.type';
 import { wrapPagination } from 'src/common/utils/object.util';
+import { ObjectId } from 'typeorm';
   
   @Injectable()
   export class CategoryService {
     constructor(
-      @InjectModel(Category.name) private categoryModel: Model<Category>,
+      @InjectModel(Test.name) private categoryModel: Model<TestDocument>,
     ) {}
   
     async create(input: CreateCategoryDto) {
-      const isExist = await this.categoryModel.findOne({title:input.title} );
+      const isExist = await this.categoryModel.findOne({name:input.name} );
       console.log(isExist)
       if (isExist) {
       throw new HttpException('CATEGORY_IN_USED', HttpStatus.BAD_REQUEST);
@@ -41,17 +42,34 @@ import { wrapPagination } from 'src/common/utils/object.util';
       });
     }
 
+// "_id": "6710a590e219d13829683869",
+//             "name": "Preeti Rajdan",
+//             "language": "Hindi
+// "_id": "6710a590e219d1382968386a",
+//             "name": "Sanjay Trivedi",
+//             "language": "Hindi"
+
     async getList(
       params: FilterCategoryDto,
     ): Promise<ListPaginate<CategoryResponse>> {
       const data = await this.categoryModel
-        .find({ title: new RegExp(params.filter, 'i') })
+        .find( {
+         $or: [
+           { name: {$gt:params.filter} },
+          {name:params.filter,_id: { $gt: params._id }}]   
+        } )
         .limit(params.limit)
-        .skip(params.limit * (params.page - 1))
         .sort({
-          createdAt: 'asc',
+          name: 1,
+          _id:1
         })
         .exec();
+        // .find()
+      // .limit(10)
+      // .sort({
+      //      name: 1,
+      //      _id:1
+      //     })
       return wrapPagination<CategoryResponse>(
         plainToInstance(CategoryResponse, data, {
           excludeExtraneousValues: true,

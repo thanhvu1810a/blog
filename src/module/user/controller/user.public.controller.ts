@@ -2,6 +2,7 @@ import {  Controller, Get, HttpCode, HttpStatus, Param,  Query, UseGuards } from
 import { UserService } from "../user.service";
 import { ApiTags } from "@nestjs/swagger";
 import { FilterUserDto } from "../dtos/user-filter.dto";
+import { ValidateMongoId } from "src/common/utils/validate.util";
 
 @Controller('user')
 @ApiTags('Users')
@@ -16,7 +17,7 @@ export class UserPublicController{
 
     @Get(':id')
     @HttpCode(HttpStatus.OK)
-    async getById(@Param('id') id:string){
+    async getById(@Param('id',ValidateMongoId) id:string){
         return await this.userService.findByID(id)
     }
 }

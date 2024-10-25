@@ -1,13 +1,20 @@
 import { Transform } from 'class-transformer';
 import {
   IsISO8601,
+  IsMongoId,
   IsNumber,
   IsOptional,
   IsString,
   Matches,
 } from 'class-validator';
+import { Types } from 'mongoose';
 
 export class BaseFilterParamDto {
+
+  @IsOptional()
+  @IsMongoId()
+  _id: Types.ObjectId;
+
   @IsOptional()
   @IsString()
   filter?: string;
@@ -21,11 +28,6 @@ export class BaseFilterParamDto {
   @IsNumber()
   @Transform(({ value }) => parseInt(value))
   page = 1;
-
-  @IsOptional()
-  @Matches(/(?<column>[a-z]+(_[a-z]+)?)\s(?<dir>(asc|desc))$/)
-  @IsString()
-  sorting = 'created_at desc';
 
 
   @IsOptional()

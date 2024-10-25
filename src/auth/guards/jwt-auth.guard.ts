@@ -29,7 +29,7 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
         if (err) {
           throw err;
         } else if (!user) {
-          throw new HttpException('UNAUTHORIZED11', HttpStatus.UNAUTHORIZED);
+          throw new HttpException('UNAUTHORIZED', HttpStatus.UNAUTHORIZED);
         }
         return user;
       }

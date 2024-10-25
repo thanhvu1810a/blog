@@ -16,6 +16,9 @@ import  {redisStore} from 'cache-manager-redis-store';
               host: configService.get('cache.redisHost'),
               port: +configService.get('cache.redisPort'),
             },
+            database: configService.get('cache.redisDatabase'),
+            username: configService.get('cache.redisUsername'),
+            password: configService.get('cache.redisPassword'),
           }),
           ttl: +configService.get('cache.redisTTL'),
         } as CacheModuleAsyncOptions;

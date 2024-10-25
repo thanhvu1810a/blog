@@ -17,12 +17,11 @@ import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { UpdateCategoryDto } from '../dtos/update-category.dto';
 import { FilterCategoryDto } from '../dtos/filter-category.dto';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
-import { ValidateMongoId } from 'src/common/utils/validate.util';
   
-@Controller('category')
-@ApiTags('Categories')
+@Controller('test')
+@ApiTags('Tests')
 @ApiBearerAuth('accessToken')
-  export class CategoryAdminController {
+  export class TestAdminController {
     constructor(private readonly categoryService: CategoryService) {}
 
     @UseGuards(JwtAuthGuard)
@@ -42,7 +41,7 @@ import { ValidateMongoId } from 'src/common/utils/validate.util';
     @UseGuards(JwtAuthGuard)
     @Get(':id')
     @HttpCode(HttpStatus.OK)
-    async getCategoryById(@Param('id',ValidateMongoId) category_id:string) {
+    async getCategoryById(@Param('id') category_id) {
       return await this.categoryService.getById(category_id);
     }
 
@@ -56,7 +55,7 @@ import { ValidateMongoId } from 'src/common/utils/validate.util';
     @UseGuards(JwtAuthGuard)
     @Delete(':id')
     @HttpCode(HttpStatus.NO_CONTENT)
-    async delete(@Param('id',ValidateMongoId) id: string): Promise<void> {
+    async delete(@Param('id') id: string): Promise<void> {
       return this.categoryService.delete(id);
     }
   }

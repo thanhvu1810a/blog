@@ -12,26 +12,39 @@ import fs from 'fs'
 import { ClientProxy } from '@nestjs/microservices';
 import { InjectQueue } from '@nestjs/bullmq';
 import { Queue } from 'bullmq';
+import { Category, CategoryDocument } from '../category/schema/category.schema';
+import { User, UserDocument } from '../user/schema/user.schema';
 
 @Injectable()
 export class PostsService {
   constructor(
     @InjectModel(Post.name) private postModel: Model<PostDocument>,
     @InjectQueue('import') private readonly importQueue: Queue,
-    @Inject('IMPORT_SERVICE') private readonly importService: ClientProxy
+    @InjectModel(Category.name) private categoryModel: Model<CategoryDocument>,
+    @InjectModel(User.name) private userModel: Model<UserDocument>
   ) {}
 
   async createPost(input: AuthUser, post: CreatePostDto) {
     post.user = input._id;
     const new_post = await this.postModel.create(post);
     if (post.categories) {
-      await this.postModel.updateMany(
+      await this.categoryModel.updateMany(
         {
           _id: { $in: post.categories },
         },
         {
           $push: {
             posts: new_post._id,
+          },
+        },
+      );
+      await this.userModel.updateMany(
+        {
+          _id: { $in: post.user },
+        },
+        {
+          $push: {
+            blogs: new_post._id,
           },
         },
       );
@@ -100,8 +113,19 @@ export class PostsService {
   }
 
   //queues
-
   async import(file: Express.Multer.File, loggedUser: AuthUser) {
+    const type = false
+    await this.importQueue.add(
+      'import-blog',
+      { file, loggedUser, type },
+      {
+        removeOnComplete: true,
+      },
+    );
+  }
+
+  //rabbitmq
+  async importRmb(file: Express.Multer.File, loggedUser: AuthUser) {
     await this.importQueue.add(
       'import-blog',
       { file, loggedUser },
@@ -109,6 +133,7 @@ export class PostsService {
         removeOnComplete: true,
       },
     );
+    return true
   }
 
 
@@ -127,22 +152,16 @@ export class PostsService {
     });
   }
 
-  //rabbitmq
+  async rabbitTransfer(jobData:{
+    file: Express.Multer.File,
+    loggedUser: AuthUser
+  }) {
 
-  async importRmb(file: Express.Multer.File, loggedUser: AuthUser) {
+    const { file, loggedUser } = jobData;
     const workbook = new Excel.Workbook();
     await workbook.xlsx.readFile('./uploads/'+file.filename);
 
     const verifyData = await this._handleImportData(workbook, loggedUser);
-
-    this.importService.emit(
-      {
-        cmd: 'import-blog',
-      },
-      {
-        verifyData,
-      },
-    );
     return verifyData
   }
 
@@ -155,11 +174,11 @@ export class PostsService {
         if (rowNumber == 1) return;
         const values = row.values;
         data.push({
-          title: values[1],
-          description: values[2],
-          content: values[3],
-          categories: values[4],
-          user: values[5]
+          title: values[2],
+          description: values[3],
+          content: values[5],
+          categories: values[1],
+          user: values[1]
         });
       });
     });

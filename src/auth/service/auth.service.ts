@@ -10,7 +10,7 @@ import { nanoid } from 'nanoid';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { ResetToken } from '../schema/reset-token.schema';
-import { EAuthType } from 'src/enum';
+import { EAuthType } from 'src/common/database/types/enum';
 import { Token, TokenDocument } from '../schema/token.schema';
 import dayjs = require('dayjs');
 import { ConfigService } from '@nestjs/config';

@@ -19,7 +19,7 @@ export class Post {
   content:string
 
   @Prop([{ type: SchemaTypes.ObjectId, ref: 'Category' }])
-  categories: [Category]
+  categories:[Category]
 
   @Prop({ type: SchemaTypes.ObjectId, ref: 'User' })
   user:User

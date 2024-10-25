@@ -1,6 +1,6 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import { HydratedDocument, SchemaTypes } from "mongoose";
-import { ERole } from "src/enum";
+import { ERole } from "src/common/database/types/enum";
 import { Post } from "src/module/post/schema/post.schema";
 
 export type UserDocument = HydratedDocument<User>;

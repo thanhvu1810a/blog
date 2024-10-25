@@ -6,6 +6,8 @@ import { ConfigModule } from '@nestjs/config';
 import { PassportModule } from '@nestjs/passport';
 import { BullModule } from '@nestjs/bull';
 import { EmailConsumer } from './consumer/email.consumer';
+import { ScheduleModule } from '@nestjs/schedule';
+import { CacheConfigModule } from 'src/common/cache/cache.module';
 
 @Module({
   imports:[
@@ -15,6 +17,8 @@ import { EmailConsumer } from './consumer/email.consumer';
     BullModule.registerQueue({
       name: 'send-mail',
     }),
+    ScheduleModule.forRoot(),
+    CacheConfigModule
   ],
   controllers: [],
   providers: [UserService,EmailConsumer],

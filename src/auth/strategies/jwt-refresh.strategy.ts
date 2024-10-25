@@ -4,7 +4,7 @@ import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { Request } from 'express';
 import { AuthService } from '../service/auth.service';
-import { EAuthType } from 'src/enum';
+import { EAuthType } from 'src/common/database/types/enum';
 
 @Injectable()
 export class JwtRefreshStrategy extends PassportStrategy(

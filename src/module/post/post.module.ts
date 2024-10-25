@@ -7,16 +7,20 @@ import { ConfigService } from '@nestjs/config';
 import { ClientProxyFactory, ClientsModule, Transport } from '@nestjs/microservices';
 import { ImportProcessor } from './queues/queues';
 import { BullModule } from '@nestjs/bullmq';
+import { Category, CategorySchema } from '../category/schema/category.schema';
+import { User, UserSchema } from '../user/schema/user.schema';
 
 
 @Module({
   imports: [
     MongooseModule.forFeature([
       { name: Post.name, schema: PostSchema },
+      { name: Category.name, schema: CategorySchema },
+      { name: User.name, schema: UserSchema },
     ]),
     BullModule.registerQueue({
       name: 'import',
-    }),
+    }), 
     UserModule,
   ],
   controllers: [],
