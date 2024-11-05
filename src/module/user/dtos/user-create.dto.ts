@@ -14,7 +14,7 @@ export class CreateUserDto {
   @IsString()
   @MaxLength(50)
   @Transform(({ value }) => value?.toString()?.trim()?.toLowerCase())
-  email: string;
+  username: string;
 
   @IsNotEmpty()
   @IsString()

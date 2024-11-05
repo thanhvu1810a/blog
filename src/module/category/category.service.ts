@@ -22,7 +22,6 @@ import { wrapPagination } from 'src/common/utils/object.util';
   
     async create(input: CreateCategoryDto) {
       const isExist = await this.categoryModel.findOne({title:input.title} );
-      console.log(isExist)
       if (isExist) {
       throw new HttpException('CATEGORY_IN_USED', HttpStatus.BAD_REQUEST);
       }
@@ -31,7 +30,6 @@ import { wrapPagination } from 'src/common/utils/object.util';
 
     async getById(id: string): Promise<CategoryResponse> {
       const category = await this.categoryModel.findOne({ _id: id });
-      console.log(category)
       if (!category) {
         throw new HttpException('CATEGORY_NOT_FOUND', HttpStatus.NOT_FOUND);
       }

@@ -1,5 +1,5 @@
 import { Body, Controller, Get, Post, Put, Req, UseGuards } from '@nestjs/common';
-import { CodeAuthDto, ForgotPasswordDto, ResetPasswordDto } from './dtos/auth.dto';
+import { CodeAuthDto, ForgotPasswordDto, LoginUserDto, ResetPasswordDto } from './dtos/auth.dto';
 import { AuthService } from './service/auth.service';
 import { Public } from './decorator/public.decorator';
 import { LocalAuthGuard } from './guards/local-auth.guard';
@@ -13,6 +13,7 @@ import { CreateUserDto } from 'src/module/user/dtos/user-create.dto';
 import { ExtractJwt } from 'passport-jwt';
 import { EAuthType } from 'src/common/database/types/enum';
 import { Request } from 'express';
+import { AuthToken, AuthUser } from './types/auth.type';
 
 @Controller()
 export class AuthController {
@@ -23,13 +24,13 @@ export class AuthController {
   @Public()
   @UseGuards(LocalAuthGuard)
   @Post('login')
-  async login(@ReqAuthUser() user) {
+  async login(@ReqAuthUser() user:AuthUser):Promise<AuthToken> {
     return await this.authService.login(user);
   }
 
-  @UseGuards(JwtAuthGuard,RolesGuard)
+  @UseGuards(JwtAuthGuard)
   @Get('profile')
-  getProfile(@ReqAuthUser() user) {
+  getProfile(@ReqAuthUser() user:AuthUser) {
     return user;
   }
 
@@ -47,8 +48,8 @@ export class AuthController {
 
   @Public()
   @Post('retry-active')
-  async retryActiveCode(@Body("email") email:any){
-    return await this.authService.retryActiveCode(email)
+  async retryActiveCode(@Body("username") username:any){
+    return await this.authService.retryActiveCode(username)
   }
 
   @UseGuards(JwtRefreshAuthGuard)
@@ -67,7 +68,7 @@ export class AuthController {
   @Public()
   @Post('forgot-password')
   async forgotPassword(@Body() forgotPasswordDto: ForgotPasswordDto) {
-    return this.authService.forgotPassword(forgotPasswordDto.email);
+    return this.authService.forgotPassword(forgotPasswordDto.username);
   }
 
   @UseGuards(JwtAuthGuard)

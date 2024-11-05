@@ -2,19 +2,22 @@ import { IsEmail, IsNotEmpty, IsString, Matches, MinLength } from "class-validat
 
 
   export class CreateUserDto {
-    @IsNotEmpty() email: string;
+    @IsNotEmpty() username: string;
     @IsNotEmpty() name: string;
     @IsNotEmpty() password: string;
   }
   
   export class LoginUserDto {
-    @IsNotEmpty() email: string;
+    @IsNotEmpty() 
+    @IsEmail()
+    username: string;
+    
     @IsNotEmpty() password: string;
   }
 
   export class ForgotPasswordDto {
     @IsEmail()
-    email: string;
+    username: string;
   }
 
   export class ResetPasswordDto {
@@ -38,7 +41,7 @@ import { IsEmail, IsNotEmpty, IsString, Matches, MinLength } from "class-validat
   export class CodeAuthDto {
 
     @IsNotEmpty({ message: "_id cannot be empty" })
-    email: string;
+    username: string;
 
     @IsNotEmpty({ message: "code cannot be empty" })
     code: string;

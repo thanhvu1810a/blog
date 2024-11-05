@@ -5,8 +5,6 @@ import { JwtAuthGuard } from "src/auth/guards/jwt-auth.guard";
 import { User } from "../schema/user.schema";
 import { FilterUserDto } from "../dtos/user-filter.dto";
 import { ValidateMongoId } from "src/common/utils/validate.util";
-import { Cache } from "cache-manager";
-import { CACHE_MANAGER } from "@nestjs/cache-manager";
 
 @Controller('user')
 @ApiTags('Users')

@@ -8,6 +8,7 @@ export class EmailConsumer {
 
   @Process('register')
   async registerEmail(job: Job<unknown>) {
+    const time1 = new Date();
     await this.mailerService.sendMail({
       to: job.data['to'],
       subject: 'Activate your account',
@@ -17,6 +18,7 @@ export class EmailConsumer {
         activationCode: job.data['activationCode']
       },
     });
-    console.log('Send Success: ');
+    const time2 = new Date();
+    console.log('Send Success: ',time2.getTime() - time1.getTime(), 'ms');
   }
 }

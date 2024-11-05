@@ -1,6 +1,4 @@
 import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
 import { MongooseModule } from '@nestjs/mongoose';
 import { UserModule } from './module/user/user.module';
 import { AuthModule } from './auth/auth.module';
@@ -18,7 +16,6 @@ import { RouterModule } from './router/router.module';
 import { RolesGuard } from './common/role/guard/roles.guard';
 import { CacheConfigModule } from './common/cache/cache.module';
 import { QueueConfigModule } from './common/queues/queue.module';
-import { TestModule } from './module/test/test.module';
 
 @Module({
   imports: [
@@ -59,13 +56,12 @@ import { TestModule } from './module/test/test.module';
     RoleModule,
     PostsModule,
     AuthModule,
-    TestModule,
     CategoryModule,
     QueueConfigModule,
     CacheConfigModule,
   ],
-  controllers: [AppController],
-  providers: [AppService,
+  controllers: [],
+  providers: [
     {
       provide: APP_GUARD,
       useClass: JwtAuthGuard,

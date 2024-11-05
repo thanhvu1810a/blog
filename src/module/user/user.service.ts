@@ -17,7 +17,6 @@ import { ListPaginate } from 'src/common/database/types/database.type';
 import { wrapPagination } from 'src/common/utils/object.util';
 import { UpdateUserDto } from './dtos/user-update.dto';
 import { ERole } from 'src/common/database/types/enum';
-import { Cron, CronExpression } from '@nestjs/schedule';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { Cache } from 'cache-manager';
 
@@ -26,21 +25,20 @@ export class UserService {
   constructor(
     @InjectModel(User.name) private userModel: Model<UserDocument>,
     @InjectQueue('send-mail') private sendMail: Queue,
-    @Inject(CACHE_MANAGER) private cacheManager: Cache
   ) {}
 
 
   async register(registerDto:CreateUserDto):Promise<any>{
-    const {name,email,password,role} = registerDto
+    const {name,username,password,role} = registerDto
     const id = uuidv4()
-    const isExist = await this._findByEmail(email)
+    const isExist = await this._findByEmail(username)
     if(isExist){
       throw new HttpException('USERNAME_IN_USED', HttpStatus.BAD_REQUEST)
     }
 
     const hashPassword = await hashPasswordHelper(password)
     const user = await this.userModel.create({
-      name,email,password:hashPassword,
+      name,username,password:hashPassword,
       isActive:false,
       role: role === ERole.admin? ERole.admin : ERole.user,
       codeId:id,
@@ -50,8 +48,8 @@ export class UserService {
     await this.sendMail.add(
       'register',
       {
-        to: user.email,
-        name: user?.name??user.email,
+        to: user.username,
+        name: user?.name??user.username,
         activationCode:id
       },
       {
@@ -72,7 +70,7 @@ export class UserService {
       .sort({
         createdAt: 'asc',
       })
-      .exec();
+      .exec(); 
 
     return wrapPagination<UserResponse>(
       plainToInstance(UserResponse, data, {
@@ -83,9 +81,9 @@ export class UserService {
     );
   }
 
-  async findByLogin(email: string,password:string):Promise<any> {
+  async findByLogin(username: string,password:string):Promise<any> {
     const user = await this.userModel.findOne({
-      email: email,
+      username: username,
     });
 
     if (!user) {
@@ -140,7 +138,7 @@ export class UserService {
 //ChangeOnAccount
   async handleActive(data: CodeAuthDto): Promise<any> {
     const user = await this.userModel.findOne({
-      email: data.email
+      username: data.username
     })
     if (!user) {
       throw new BadRequestException("The user is not exist")
@@ -151,7 +149,7 @@ export class UserService {
 
     if (isBeforeCheck) {
       //valid => update user
-      await this.userModel.updateOne({ email: data.email }, {
+      await this.userModel.updateOne({ username: data.username }, {
         isActive: true
       })
       return { isBeforeCheck };
@@ -160,9 +158,9 @@ export class UserService {
     }
   }
 
-  async retryActive(email: any): Promise<any> {
+  async retryActive(username: any): Promise<any> {
     //check email
-    const user = await this._findByEmail(email);
+    const user = await this._findByEmail(username);
 
     if (!user) {
       throw new BadRequestException("Account does not exist")
@@ -183,8 +181,8 @@ export class UserService {
     await this.sendMail.add(
       'register',
       {
-        to: user.email,
-        name: user?.name??user.email,
+        to: user.username,
+        name: user?.name??user.username,
         activationCode:codeId
       },
       {
@@ -196,9 +194,9 @@ export class UserService {
   }
 
 
-  async _findByEmail(email) {
+  async _findByEmail(username) {
     return await this.userModel.findOne({
-      email: email,
+      username: username,
     });
   }
 

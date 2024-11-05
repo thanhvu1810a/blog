@@ -9,8 +9,8 @@ export class LocalStrategy extends PassportStrategy(Strategy){
         super()
     }
 
-    async validate(email:string,password:string):Promise<any>{
-        const user = await this.authService.validateUser(email,password)
+    async validate(username:string,password:string):Promise<any>{
+        const user = await this.authService.validateUser(username,password)
         if(!user) {throw new UnauthorizedException({message:'local'})}
         if(user.isActive === false){throw new BadRequestException("Account is not activate")}
         return user

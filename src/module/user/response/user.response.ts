@@ -5,7 +5,7 @@ import { ERole } from "src/common/database/types/enum";
 @Exclude()
 export class UserResponse extends BaseResponse{
     @Expose()
-    email:string
+    username:string
 
     @Expose()
     name:string

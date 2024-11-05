@@ -38,16 +38,16 @@ export class AuthService {
     return await this.userService.handleActive(data)
   }
 
-  async retryActiveCode(email:string){
-    return await this.userService.retryActive(email)
+  async retryActiveCode(username:string){
+    return await this.userService.retryActive(username)
   }
 
   async login(user: AuthUser):Promise<AuthToken> {
-    return await this.token(user) 
+    return await this.token(user)
   }
 
   async token(user: AuthUser): Promise<AuthToken> {
-    const payload = {email: user.email, name:user.name, _id: user._id, role: user.role};
+    const payload = {username: user.username, name:user.name, _id: user._id, role: user.role};
     const token = await this._createToken(payload);
     const refreshToken = token.refreshToken
     const accessToken = token.accessToken
@@ -76,7 +76,7 @@ export class AuthService {
       refreshToken,
       refreshTokenExpiresAt,
       user: {
-        email: user.email,
+        username: user.username,
         name: user.name,
         role: user.role,
         _id: user._id
@@ -84,8 +84,8 @@ export class AuthService {
     };
   }
 
-  async validateUser(email:string,password:string) {
-    const user = await this.userService.findByLogin(email,password);
+  async validateUser(username:string,password:string) {
+    const user = await this.userService.findByLogin(username,password);
     if (!user) {
       throw new HttpException('Invalid token', HttpStatus.UNAUTHORIZED);
     }
@@ -121,20 +121,20 @@ export class AuthService {
     return {
       _id: user.id,
       name: user.name,
-      email: user.email,
+      username: user.username,
       role: user.role,
     };
   }
 
   private async _createToken(
-    { email,name,_id,role }
+    { username,name,_id,role }
   ) {
     const now = dayjs().unix();
     const expireAtRefresh = Number(this.configService.get<number>('auth.jwt.refreshLifeTime'))
     const expireAt = Number(this.configService.get<number>('auth.jwt.accessLifeTime'))
 
     const accessToken = this.jwtService.sign(
-      {email,name,_id,role},
+      {username,name,_id,role},
       {
         secret: this.configService.get<string>('auth.jwt.accessSecret'),
         expiresIn: expireAt + now,
@@ -142,7 +142,7 @@ export class AuthService {
     );
     
     const refreshToken = this.jwtService.sign(
-      { email,name,_id, role },
+      { username,name,_id, role },
       {
           secret: this.configService.get<string>('auth.jwt.refreshSecret'),
           expiresIn: expireAtRefresh + now,
@@ -164,9 +164,9 @@ export class AuthService {
       if (!authenticated) {
         throw new UnauthorizedException();
       }
-      const {email,name,_id,role} = user
+      const {username,name,_id,role} = user
       const accessToken = this.jwtService.sign(
-        {email,name,_id,role}
+        {username,name,_id,role}
       );
       return {accessToken: accessToken};
     
@@ -190,9 +190,9 @@ export class AuthService {
     await user.save()
   }
 
-  async forgotPassword(email: string) {
+  async forgotPassword(username: string) {
     //Check that user exists
-    const user = await this.userService._findByEmail( email );
+    const user = await this.userService._findByEmail( username );
 
     if (user) {
       //If user exists, generate password reset link
@@ -206,7 +206,7 @@ export class AuthService {
         expiryDate,
       });
       //Send the link to the user by email
-      this.mailService.sendPasswordResetEmail(email, resetToken);
+      this.mailService.sendPasswordResetEmail(username, resetToken);
     }
 
     return { message: 'If this user exists, they will receive an email' };
@@ -235,7 +235,7 @@ export class AuthService {
 
   async logout(user: any) {
     await this.userService.logout(
-      { email: user.username },
+      { username: user.username },
       { refreshToken: null },
     );
     return user

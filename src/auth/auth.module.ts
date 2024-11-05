@@ -34,6 +34,6 @@ import { User, UserSchema } from 'src/module/user/schema/user.schema';
   ],
   providers: [AuthService,LocalStrategy,JwtStrategy,JwtRefreshStrategy,MailService],
   controllers: [AuthController],
-  exports: [AuthService],
+  exports: [AuthService], 
 })
 export class AuthModule {}

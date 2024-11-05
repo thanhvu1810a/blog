@@ -2,7 +2,7 @@ import { ERole } from 'src/common/database/types/enum';
 
 export type AuthUser = {
   _id: string;
-  email: string;
+  username: string;
   name: string;
   role: ERole;
 };
